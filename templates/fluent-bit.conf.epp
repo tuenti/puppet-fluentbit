@@ -8,9 +8,6 @@
     Daemon                    <%= $daemon %>
     Grace                     <%= $grace %>
     dns.mode                  <%= $dns_mode %>
-<% if $log_file %>
-    Log_File                  <%= $log_file %>
-<% end -%>
     Log_Level                 <%= $log_level %>
     Parsers_File              <%= $parsers_file %>
     Plugin_File               <%= $plugins_file %>
