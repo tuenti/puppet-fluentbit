@@ -1,4 +1,4 @@
-define fluentbit::upstream(
+define fluentbit::upstream (
   String[1]            $upstream_name = $name,
   Hash[String, String] $nodes,
 ) {

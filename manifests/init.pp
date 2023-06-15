@@ -244,8 +244,8 @@ class fluentbit (
   -> Class['::fluentbit::config']
   ~> Class['::fluentbit::service']
 
-  create_resources(fluentbit::pipeline, $input_plugins)
-  create_resources(fluentbit::pipeline, $output_plugins)
-  create_resources(fluentbit::pipeline, $filter_plugins)
+  create_resources(fluentbit::pipeline, $input_plugins, { type => 'input' })
+  create_resources(fluentbit::pipeline, $output_plugins, { type => 'output' })
+  create_resources(fluentbit::pipeline, $filter_plugins, { type => 'filter' })
   create_resources(fluentbit::upstream, $upstreams)
 }
