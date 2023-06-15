@@ -192,9 +192,9 @@ class fluentbit (
   Boolean $manage_data_dir,
   Boolean $manage_storage_dir,
 
-  Hash[String, Fluentbit::Plugin] $input_plugins,
-  Hash[String, Fluentbit::Plugin] $output_plugins,
-  Hash[String, Fluentbit::Plugin] $filter_plugins,
+  Hash[String, Hash] $input_plugins,
+  Hash[String, Hash] $output_plugins,
+  Hash[String, Hash] $filter_plugins,
 
   Hash[String, Fluentbit::Parser] $parsers,
   Hash[String, Fluentbit::Stream] $streams,
