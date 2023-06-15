@@ -9,6 +9,15 @@ define fluentbit::pipeline (
     },
     default => {},
   }
+
+  if $type == 'output' and $plugin_name == 'forward' {
+    $upstream_settings = $properties['upstream'] ? {
+      undef   => {},
+      default => "${fluentbit::config_dir}/upstream-${properties['upstream']}.conf",
+    }
+  } else {
+    $upstream_settings = {}
+  }
   file { "${fluentbit::config::plugin_dir}/${title}.yaml":
     mode    => $fluentbit::config_file_mode,
     notify  => Service[$fluentbit::service_name],
