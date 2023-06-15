@@ -87,29 +87,23 @@ class fluentbit::config {
 
   file { $fluentbit::config_file:
     mode    => $fluentbit::config_file_mode,
-    content => to_yaml(
+    content => epp('fluentbit/fluent-bit.conf.epp',
       {
-        'env'      => $variables,
-        'includes' => [
-          "${plugin_dir}/*.conf",
-        ],
-        'service'  => {
-          'flush'                    => $flush,
-          'grace'                    => $grace,
-          'daemon'                   => $daemon,
-          'dns.mode'                 => $dns_mode,
-          'log_level'                => $log_level,
-          'parsers_file'             => $parsers_file,
-          'streams_file'             => $streams_file,
-          'http_server'              => $http_server,
-          'http_listen'              => $http_listen,
-          'http_port'                => $http_port,
-          'coro_stack_size'          => $coro_stack_size,
-          'scheduler.cap'            => $scheduler_cap,
-          'scheduler.base'           => $scheduler_base,
-          'json.convert_nan_to_null' => $json_convert_nan_to_null,
-        } + $storage_config,
-      },
+        'flush'                    => $flush,
+        'grace'                    => $grace,
+        'daemon'                   => $daemon,
+        'dns.mode'                 => $dns_mode,
+        'log_level'                => $log_level,
+        'parsers_file'             => $parsers_file,
+        'streams_file'             => $streams_file,
+        'http_server'              => $http_server,
+        'http_listen'              => $http_listen,
+        'http_port'                => $http_port,
+        'coro_stack_size'          => $coro_stack_size,
+        'scheduler.cap'            => $scheduler_cap,
+        'scheduler.base'           => $scheduler_base,
+        'json.convert_nan_to_null' => $json_convert_nan_to_null,
+      } + $storage_config,
     ),
   }
 
