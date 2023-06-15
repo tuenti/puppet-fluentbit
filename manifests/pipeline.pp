@@ -27,6 +27,7 @@ define fluentbit::pipeline (
           "${type}s" => [
             merge(
               $db_settings,
+              $upstream_settings,
               $properties,
               {
                 'name' => $plugin_name
