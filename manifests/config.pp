@@ -97,6 +97,7 @@ class fluentbit::config {
           'dns.mode'                 => $dns_mode,
           'log_level'                => $log_level,
           'parsers_file'             => $parsers_file,
+          'plugins_file'             => $plugins_file,
           'streams_file'             => $streams_file,
           'http_server'              => $http_server,
           'http_listen'              => $http_listen,
