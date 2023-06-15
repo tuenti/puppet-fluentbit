@@ -12,10 +12,10 @@ class fluentbit::config {
   File {
     ensure  => file,
     mode    => $fluentbit::config_file_mode,
-    notify  => Class['fluentbit::service'],
   }
 
   $config_dir = dirname($fluentbit::config_file)
+  $plugin_dir = "${config_dir}/pipelines"
 
   if $fluentbit::manage_config_dir {
     file { $config_dir:
@@ -24,11 +24,32 @@ class fluentbit::config {
       recurse => true,
       mode    => '0755',
     }
+    -> file { $plugin_dir:
+      ensure  => directory,
+      purge   => true,
+      recurse => true,
+      mode    => '0755',
+    }
+  }
+
+  if $fluentbit::manage_data_dir {
+    file { $fluentbit::data_dir:
+      ensure => directory,
+      mode   => '0755',
+    }
+  }
+
+  if $fluentbit::manage_storage_dir and $fluentbit::storage_path {
+    file { $fluentbit::storage_path:
+      ensure => directory,
+      mode   => '0755',
+    }
   }
 
   $flush = $fluentbit::flush
+  $grace = $fluentbit::grace
   $daemon = bool2str($fluentbit::daemon, 'On', 'Off')
-  $log_file = $fluentbit::log_file
+  $dns_mode = $fluentbit::dns_mode
   $log_level = $fluentbit::log_level
   $parsers_file = $fluentbit::parsers_file
   $plugins_file = $fluentbit::plugins_file
@@ -41,27 +62,82 @@ class fluentbit::config {
   $storage_sync = $fluentbit::storage_sync
   $storage_checksum = bool2str($fluentbit::storage_checksum, 'On', 'Off')
   $storage_backlog_mem_limit = $fluentbit::storage_backlog_mem_limit
-  $variables = $fluentbit::variables
+  $storage_max_chunks_up = $fluentbit::storage_max_chunks_up
+  $storage_metrics = bool2str($fluentbit::storage_metrics, 'On', 'Off')
+  $storage_delete_irrecoverable_chunks = bool2str($fluentbit::storage_delete_irrecoverable_chunks, 'On', 'Off')
+  $scheduler_cap = $fluentbit::scheduler_cap
+  $scheduler_base = $fluentbit::scheduler_base
+  $json_convert_nan_to_null = $fluentbit::json_convert_nan_to_null
+  $variables = $fluentbit::variables.filter |$k, $v| {
+    length($v) > 0
+  }
+
+  $storage_config = $storage_path ? {
+    undef            => {},
+    default          => {
+      'storage.path'                        => $storage_path,
+      'storage.sync'                        => $storage_sync,
+      'storage.checksum'                    => $storage_checksum,
+      'storage.max_chunks_up'               => $storage_max_chunks_up,
+      'storage.backlog.mem_limit'           => $storage_backlog_mem_limit,
+      'storage.metrics'                     => $storage_metrics,
+      'storage.delete_irrecoverable_chunks' => $storage_delete_irrecoverable_chunks,
+    },
+  }
 
   file { $fluentbit::config_file:
-    content => template('fluentbit/td-agent-bit.conf.erb'),
+    mode    => $fluentbit::config_file_mode,
+    content => to_yaml(
+      {
+        'env'      => $variables,
+        'includes' => [
+          "${plugin_dir}/*.yaml",
+        ],
+        'service'  => {
+          'flush'                    => $flush,
+          'grace'                    => $grace,
+          'daemon'                   => $daemon,
+          'dns.mode'                 => $dns_mode,
+          'log_level'                => $log_level,
+          'parsers_file'             => $parsers_file,
+          'streams_file'             => $streams_file,
+          'http_server'              => $http_server,
+          'http_listen'              => $http_listen,
+          'http_port'                => $http_port,
+          'coro_stack_size'          => $coro_stack_size,
+          'scheduler.cap'            => $scheduler_cap,
+          'scheduler.base'           => $scheduler_base,
+          'json.convert_nan_to_null' => $json_convert_nan_to_null,
+        } + $storage_config,
+      },
+    ),
   }
 
   $parsers = $fluentbit::parsers
 
   file { $fluentbit::parsers_file:
-    content => template('fluentbit/parsers.conf.erb'),
+    content => epp('fluentbit/parsers.conf.epp', { parsers => $parsers }),
   }
 
   $plugins = $fluentbit::plugins
 
   file { $fluentbit::plugins_file:
-    content => template('fluentbit/plugins.conf.erb'),
+    content => epp('fluentbit/plugins.conf.epp', { plugins => $plugins }),
   }
 
   $streams = $fluentbit::streams
 
   file { $fluentbit::streams_file:
-    content => template('fluentbit/streams.conf.erb'),
+    content => epp('fluentbit/streams.conf.epp', { streams => $streams }),
+  }
+
+  systemd::unit_file { "${fluentbit::service_name}.service":
+    ensure  => present,
+    content => epp('fluentbit/fluent-bit.service.epp',
+      {
+        'binary_file' => $fluentbit::binary_file,
+        'config_file' => $fluentbit::config_file,
+      }
+    ),
   }
 }

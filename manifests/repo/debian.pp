@@ -11,17 +11,20 @@ class fluentbit::repo::debian {
   $release = dig($facts, 'os', 'distro', 'codename')
   $supported = $flavour ? {
     'Debian' => [
-      'jessie',
       'stretch',
       'buster',
+      'bullseye',
+      'bookworm',
     ],
     'Ubuntu' => [
       'xenial',
       'bionic',
     ],
     'Raspbian' => [
-      'jessie',
       'stretch',
+      'buster',
+      'bullseye',
+      'bookworm',
     ],
     default => [],
   }

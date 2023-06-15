@@ -1,5 +1,4 @@
 type Fluentbit::Parser = Struct[{
-  name                   => String[1],
   format                 => Enum['json', 'regex', 'ltsv', 'logfmt'],
   Optional[regex]        => String[1],
   Optional[time_key]     => String[1],
