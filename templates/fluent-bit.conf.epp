@@ -19,16 +19,18 @@
     scheduler.cap             <%= $scheduler_cap %>
     scheduler.base            <%= $scheduler_base %>
     json.convert_nan_to_null  <%= $json_convert_nan_to_null %>
+<% if $storage_checksum { %>
     storage.checksum          <%= $storage_checksum %>
-<% if $storage_path %>
+<% } -%>
+<% if $storage_path { %>
     storage.path              <%= $storage_path %>
-<% end -%>
-<% if $storage_sync %>
+<% } -%>
+<% if $storage_sync { %>
     storage.sync              <%= $storage_sync %>
-<% end -%>
-<% if $storage_backlog_mem_limit %>
+<% } -%>
+<% if $storage_backlog_mem_limit { %>
     storage.backlog.mem_limit <%= $storage_backlog_mem_limit %>
-<% end -%>
+<% } -%>
     storage.max_chunks_up     <%= $storage_max_chunks_up %>
     storage.metrics           <%= $storage_metrics %>
     storage.delete_irrecoverable_chunks <%= $storage_delete_irrecoverable_chunks %>
