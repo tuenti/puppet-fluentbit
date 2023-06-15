@@ -40,23 +40,18 @@ define fluentbit::pipeline (
   } else {
     $upstream_settings = {}
   }
-  file { "${fluentbit::config::plugin_dir}/${title}.yaml":
+  file { "${fluentbit::config::plugin_dir}/${title}.conf":
     mode    => $fluentbit::config_file_mode,
     notify  => Service[$fluentbit::service_name],
-    content => to_yaml(
+    content => epp('fluentbit/pipeline.conf.epp',
       {
-        'pipeline' => {
-          "${type}s" => [
-            merge(
-              $db_settings,
-              $upstream_settings,
-              $properties,
-              {
-                'name' => $plugin_name
-              }
-            )
-          ],
-        },
+        name       => $plugin_name,
+        type       => $type,
+        properties => merge(
+          $db_settings,
+          $upstream_settings,
+          $properties,
+        )
       }
     ),
   }
