@@ -128,6 +128,9 @@
 # @param streams
 #   Stream processing tasks
 #
+# @param upstreams
+#   Upstreams used by forward plugins
+#
 # @param manage_parsers_file
 #   Whether to manage the parser definitions
 #
@@ -195,6 +198,7 @@ class fluentbit (
 
   Hash[String, Fluentbit::Parser] $parsers,
   Hash[String, Fluentbit::Stream] $streams,
+  Hash[String, Hash] $upstreams,
   Array[Stdlib::Absolutepath] $plugins,
 
   Stdlib::Absolutepath $binary_file,
@@ -243,4 +247,5 @@ class fluentbit (
   create_resources(fluentbit::pipeline, $input_plugins)
   create_resources(fluentbit::pipeline, $output_plugins)
   create_resources(fluentbit::pipeline, $filter_plugins)
+  create_resources(fluentbit::upstream, $upstreams)
 }
