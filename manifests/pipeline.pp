@@ -1,3 +1,25 @@
+# @summary Configures fluentbit pipeline (input, output or filter)
+#
+# @note This resource add extra configuration elements for some combinations of
+#  type-plugin_names, like db configuration for input plugins, or upstream configuration
+#  for output-forward plugin
+#
+# @example
+#   fluentbit::pipeline { 'input-dummy':
+#     type        => 'input',
+#     plugin_name => 'dummy',
+#   }
+# @example
+#   fluentbit {
+#     input_plugins => {
+#       'input-dummy' => { 'plugin_name' => 'dummy' },
+#     },
+#   }
+# @see https://docs.fluentbit.io/manual/administration/configuring-fluent-bit/yaml/configuration-file#config_pipeline
+#
+# @param type Defines the pipeline type to be configured
+# @param plugin_name fluent-bit plugin name to be used
+# @param properties Hash of rest of properties needed to configure the pipeline-plugin
 define fluentbit::pipeline (
   Enum['input','filter','output'] $type,
   String[1]                       $plugin_name,
