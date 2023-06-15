@@ -91,7 +91,6 @@ class fluentbit::config {
       {
         'env'      => $variables,
         'includes' => [
-          "${plugin_dir}/*.yaml",
           "${plugin_dir}/*.conf",
         ],
         'service'  => {
