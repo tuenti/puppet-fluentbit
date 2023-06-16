@@ -34,8 +34,10 @@ define fluentbit::pipeline (
 
   if $type == 'output' and $plugin_name == 'forward' {
     $upstream_settings = $properties['upstream'] ? {
-      undef   => {},
-      default => "${fluentbit::config::config_dir}/upstream-${properties['upstream']}.conf",
+      undef      => {},
+      default    => {
+        upstream => "${fluentbit::config::config_dir}/upstream-${properties['upstream']}.conf",
+      },
     }
   } else {
     $upstream_settings = {}
