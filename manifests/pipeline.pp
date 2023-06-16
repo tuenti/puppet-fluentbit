@@ -51,8 +51,8 @@ define fluentbit::pipeline (
         type       => $type,
         properties => merge(
           $db_settings,
-          $upstream_settings,
           $properties,
+          $upstream_settings,
         )
       }
     ),
