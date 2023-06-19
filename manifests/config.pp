@@ -22,27 +22,27 @@ class fluentbit::config {
       ensure  => directory,
       purge   => true,
       recurse => true,
-      mode    => '0755',
+      mode    => $fluentbit::config_folder_mode,
     }
     -> file { $plugin_dir:
       ensure  => directory,
       purge   => true,
       recurse => true,
-      mode    => '0755',
+      mode    => $fluentbit::config_folder_mode,
     }
   }
 
   if $fluentbit::manage_data_dir {
     file { $fluentbit::data_dir:
       ensure => directory,
-      mode   => '0755',
+      mode   => $fluentbit::config_folder_mode,
     }
   }
 
   if $fluentbit::manage_storage_dir and $fluentbit::storage_path {
     file { $fluentbit::storage_path:
       ensure => directory,
-      mode   => '0755',
+      mode   => $fluentbit::config_folder_mode,
     }
   }
 

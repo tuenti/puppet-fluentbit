@@ -74,6 +74,9 @@
 # @param config_file_mode
 #   File mode to apply to the daemon configuration file
 #
+# @param config_folder_mode
+#   File mode to apply folders managed by the module
+#
 # @param storage_path
 #   Set an optional location in the file system to store streams and chunks of data.
 #   If this parameter is not set, Input plugins can only use in-memory buffering.
@@ -205,6 +208,7 @@ class fluentbit (
   Stdlib::Absolutepath $data_dir,
   Stdlib::Absolutepath $config_file,
   Stdlib::Filemode $config_file_mode,
+  Stdlib::Filemode $config_folder_mode,
   Integer $flush,
   Integer $grace,
   Boolean $daemon,

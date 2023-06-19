@@ -17,7 +17,7 @@ define fluentbit::upstream (
 ) {
   file { "${fluentbit::config::config_dir}/upstream-${upstream_name}.conf":
     ensure  => present,
-    mode    => '0640',
+    mode    => $fluentbit::config_file_mode,
     content => epp('fluentbit/upstream.conf.epp',
       {
         'name'  => $upstream_name,
