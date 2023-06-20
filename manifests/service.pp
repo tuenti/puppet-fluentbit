@@ -10,7 +10,8 @@ class fluentbit::service {
       enable     => $fluentbit::service_enable,
       hasstatus  => $fluentbit::service_has_status,
       hasrestart => $fluentbit::service_has_restart,
-      name       => $::fluentbit::service_name,
+      restart    => $fluentbit::service_restart_command,
+      name       => $fluentbit::service_name,
     }
   }
 }
