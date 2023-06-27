@@ -145,6 +145,11 @@
 #   The default value consists of all the available definitions provided by the
 #   upstream project as of version 1.3
 #
+# @param multiline_parsers
+#   List of parser definitions.
+#   The default value consists of all the available definitions provided by the
+#   upstream project as of version 2.1
+#
 # @param flush
 #   Set the flush time in seconds. Everytime it timeouts, the engine will flush the records to the output plugin.
 # @param grace
@@ -200,6 +205,7 @@ class fluentbit (
   Hash[String, Hash] $filter_plugins,
 
   Hash[String, Fluentbit::Parser] $parsers,
+  Hash[String, Variant[Fluentbit::MultilineParser]] $multiline_parsers,
   Hash[String, Fluentbit::Stream] $streams,
   Hash[String, Hash] $upstreams,
   Array[Stdlib::Absolutepath] $plugins,

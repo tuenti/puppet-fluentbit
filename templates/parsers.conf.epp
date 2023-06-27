@@ -32,4 +32,22 @@
 <% } -%>
 
 <% } -%>
-# <%= $parsers.length %> parsers
+<% $multiline_parsers.each |$name, $parser| { -%>
+[MULTILINE_PARSER]
+    Name          <%= $name %>
+    Type          <%= $parser['type'] %>
+<% if $parser['parser'] { -%>
+    Parser        <%= $parser['time_format'] %>
+<% } -%>
+<% if $parser['key_content'] { -%>
+    Key_content   <%= $parser['key_content'] %>
+<% } -%>
+<% if $parser['flush_timeout'] { -%>
+    Flush_timeout <%= $parser['flush_timeout'] %>
+<% } -%>
+<% $parser['rules'].each |$rule| { -%>
+    Rule  "<%= $rule['state'] %>" "<%= $rule['regex'] %>" "<%= $rule['next_state'] %>"
+<% } -%>
+
+<% } -%>
+# <%= $parsers.length + $multiline_parsers.length %> parsers

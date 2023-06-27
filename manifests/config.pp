@@ -112,9 +112,15 @@ class fluentbit::config {
   }
 
   $parsers = $fluentbit::parsers
+  $multiline_parsers = $fluentbit::multiline_parsers
 
   file { $fluentbit::parsers_file:
-    content => epp('fluentbit/parsers.conf.epp', { parsers => $parsers }),
+    content => epp('fluentbit/parsers.conf.epp',
+      {
+        parsers           => $parsers,
+        multiline_parsers => $multiline_parsers,
+      }
+    ),
   }
 
   $plugins = $fluentbit::plugins

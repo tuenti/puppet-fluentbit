@@ -25,11 +25,14 @@ define fluentbit::pipeline (
   String[1]                       $plugin_name,
   Hash[String, Any]               $properties = {},
 ) {
-  $db_settings = $type ? {
-    'input' => {
+  $db_compatible_plugins = ['input', 'systemd']
+
+  if $type == 'input' and $plugin_name in $db_compatible_plugins {
+    $db_settings = {
       'db' => "${fluentbit::data_dir}/${title}",
-    },
-    default => {},
+    }
+  } else {
+    $db_settings = {}
   }
 
   if $type == 'output' and $plugin_name == 'forward' {
