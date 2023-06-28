@@ -16,6 +16,7 @@ class fluentbit::config {
 
   $config_dir = dirname($fluentbit::config_file)
   $plugin_dir = "${config_dir}/pipelines"
+  $scripts_dir = "${config_dir}/lua-scripts"
 
   if $fluentbit::manage_config_dir {
     file { $config_dir:
@@ -29,6 +30,13 @@ class fluentbit::config {
       purge   => true,
       recurse => true,
       mode    => $fluentbit::config_folder_mode,
+    }
+    file { $scripts_dir:
+      ensure  => directory,
+      purge   => true,
+      recurse => true,
+      mode    => $fluentbit::config_folder_mode,
+      require => File[$config_dir],
     }
   }
 

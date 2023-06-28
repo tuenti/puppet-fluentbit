@@ -45,6 +45,23 @@ define fluentbit::pipeline (
   } else {
     $upstream_settings = {}
   }
+
+  if $type == 'filter' and $plugin_name == 'lua' and $properties['code'] {
+    # Catch 'code' property for lua scripts and write it to disk
+    file { "${fluentbit::config::scripts_dir}/${title}.lua":
+      ensure  => present,
+      mode    => $fluentbit::config_file_mode,
+      content => $properties['code'],
+      notify  => Service[$fluentbit::service_name],
+    }
+    $script_settings = {
+      'script' => "${fluentbit::config::scripts_dir}/${title}.lua",
+      'code'   => undef,
+    }
+  } else {
+    $script_settings = {}
+  }
+
   file { "${fluentbit::config::plugin_dir}/${title}.conf":
     mode    => $fluentbit::config_file_mode,
     notify  => Service[$fluentbit::service_name],
@@ -58,6 +75,7 @@ define fluentbit::pipeline (
             alias => $title,
           },
           $properties,
+          $script_settings,
           $upstream_settings,
         )
       }
