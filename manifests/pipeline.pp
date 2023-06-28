@@ -25,7 +25,7 @@ define fluentbit::pipeline (
   String[1]                       $plugin_name,
   Hash[String, Any]               $properties = {},
 ) {
-  $db_compatible_plugins = ['input', 'systemd']
+  $db_compatible_plugins = ['tail', 'systemd']
 
   if $type == 'input' and $plugin_name in $db_compatible_plugins {
     $db_settings = {
