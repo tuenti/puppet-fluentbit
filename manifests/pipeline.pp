@@ -65,7 +65,7 @@ define fluentbit::pipeline (
   }
 
   concat::fragment { "fragment-${title}":
-    target  => "${fluentbit::config::plugins_dir}/${type}s.conf",
+    target  => "${fluentbit::config::plugin_dir}/${type}s.conf",
     content => epp('fluentbit/pipeline.conf.epp',
       {
         name       => $plugin_name,
