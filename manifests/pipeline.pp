@@ -19,10 +19,12 @@
 #
 # @param type Defines the pipeline type to be configured
 # @param plugin_name fluent-bit plugin name to be used
+# @param order Order to be applied to concat::fragment
 # @param properties Hash of rest of properties needed to configure the pipeline-plugin
 define fluentbit::pipeline (
   Enum['input','filter','output'] $type,
   String[1]                       $plugin_name,
+  String[1]                       $order      = '10',
   Hash[String, Any]               $properties = {},
 ) {
   $db_compatible_plugins = ['tail', 'systemd']
@@ -62,9 +64,8 @@ define fluentbit::pipeline (
     $script_settings = {}
   }
 
-  file { "${fluentbit::config::plugin_dir}/${title}.conf":
-    mode    => $fluentbit::config_file_mode,
-    notify  => Service[$fluentbit::service_name],
+  concat::fragment { "fragment-${title}":
+    target  => "${fluentbit::config::plugins_dir}/${type}s.conf",
     content => epp('fluentbit/pipeline.conf.epp',
       {
         name       => $plugin_name,

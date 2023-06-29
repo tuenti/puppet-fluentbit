@@ -35,4 +35,6 @@
     storage.metrics           <%= $service['storage.metrics'] %>
     storage.delete_irrecoverable_chunks <%= $service['storage.delete_irrecoverable_chunks'] %>
 
+<% if $manage_config_dir { %>
 @INCLUDE pipelines/*.conf
+<% } %>

@@ -38,6 +38,37 @@ class fluentbit::config {
       mode    => $fluentbit::config_folder_mode,
       require => File[$config_dir],
     }
+
+    Concat {
+      ensure         => present,
+      mode           => $fluentbit::config_file_mode,
+      require        => File[$config_dir],
+      ensure_newline => true,
+    }
+
+    concat {
+      [
+        "${config_dir}/inputs.conf",
+        "${config_dir}/outputs.conf",
+        "${config_dir}/filters.conf",
+      ]:
+    }
+
+    concat::fragment { 'inputs-header':
+      target  => "${config_dir}/inputs.conf",
+      content => "# Managed by Puppet\n",
+      order   => '01',
+    }
+    concat::fragment { 'outputs-header':
+      target  => "${config_dir}/outputs.conf",
+      content => "# Managed by Puppet\n",
+      order   => '01',
+    }
+    concat::fragment { 'filters-header':
+      target  => "${config_dir}/filters.conf",
+      content => "# Managed by Puppet\n",
+      order   => '01',
+    }
   }
 
   if $fluentbit::manage_data_dir {
@@ -97,8 +128,9 @@ class fluentbit::config {
     mode    => $fluentbit::config_file_mode,
     content => epp('fluentbit/fluent-bit.conf.epp',
       {
-        variables => $variables,
-        service   => {
+        manage_config_dir => $fluentbit::manage_config_dir,
+        variables         => $variables,
+        service           => {
           'flush'                    => $flush,
           'grace'                    => $grace,
           'daemon'                   => $daemon,
