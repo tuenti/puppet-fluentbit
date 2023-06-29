@@ -1,3 +1,4 @@
+
 [<%= $type.upcase %>]
   Name  <%= $name %>
 <% $properties.each |$key, $value| { -%>
