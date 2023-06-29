@@ -48,9 +48,9 @@ class fluentbit::config {
 
     concat {
       [
-        "${config_dir}/inputs.conf",
-        "${config_dir}/outputs.conf",
-        "${config_dir}/filters.conf",
+        "${plugin_dir}/inputs.conf",
+        "${plugin_dir}/outputs.conf",
+        "${plugin_dir}/filters.conf",
       ]:
     }
 
