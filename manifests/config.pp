@@ -55,17 +55,17 @@ class fluentbit::config {
     }
 
     concat::fragment { 'inputs-header':
-      target  => "${config_dir}/inputs.conf",
+      target  => "${plugin_dir}/inputs.conf",
       content => "# Managed by Puppet\n",
       order   => '01',
     }
     concat::fragment { 'outputs-header':
-      target  => "${config_dir}/outputs.conf",
+      target  => "${plugin_dir}/outputs.conf",
       content => "# Managed by Puppet\n",
       order   => '01',
     }
     concat::fragment { 'filters-header':
-      target  => "${config_dir}/filters.conf",
+      target  => "${plugin_dir}/filters.conf",
       content => "# Managed by Puppet\n",
       order   => '01',
     }
