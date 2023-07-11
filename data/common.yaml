@@ -59,6 +59,7 @@ fluentbit::streams: {}
 
 fluentbit::manage_parsers_file: true
 fluentbit::parsers_file: '/etc/fluent-bit/parsers.conf'
+fluentbit::multiline_parsers: {}
 fluentbit::parsers:
 
   'apache':

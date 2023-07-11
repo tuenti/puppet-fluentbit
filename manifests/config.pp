@@ -16,6 +16,7 @@ class fluentbit::config {
 
   $config_dir = dirname($fluentbit::config_file)
   $plugin_dir = "${config_dir}/pipelines"
+  $scripts_dir = "${config_dir}/lua-scripts"
 
   if $fluentbit::manage_config_dir {
     file { $config_dir:
@@ -29,6 +30,44 @@ class fluentbit::config {
       purge   => true,
       recurse => true,
       mode    => $fluentbit::config_folder_mode,
+    }
+    file { $scripts_dir:
+      ensure  => directory,
+      purge   => true,
+      recurse => true,
+      mode    => $fluentbit::config_folder_mode,
+      require => File[$config_dir],
+    }
+
+    Concat {
+      ensure         => present,
+      mode           => $fluentbit::config_file_mode,
+      require        => File[$config_dir],
+      ensure_newline => true,
+    }
+
+    concat {
+      [
+        "${plugin_dir}/inputs.conf",
+        "${plugin_dir}/outputs.conf",
+        "${plugin_dir}/filters.conf",
+      ]:
+    }
+
+    concat::fragment { 'inputs-header':
+      target  => "${plugin_dir}/inputs.conf",
+      content => "# Managed by Puppet\n",
+      order   => '01',
+    }
+    concat::fragment { 'outputs-header':
+      target  => "${plugin_dir}/outputs.conf",
+      content => "# Managed by Puppet\n",
+      order   => '01',
+    }
+    concat::fragment { 'filters-header':
+      target  => "${plugin_dir}/filters.conf",
+      content => "# Managed by Puppet\n",
+      order   => '01',
     }
   }
 
@@ -89,8 +128,9 @@ class fluentbit::config {
     mode    => $fluentbit::config_file_mode,
     content => epp('fluentbit/fluent-bit.conf.epp',
       {
-        variables => $variables,
-        service   => {
+        manage_config_dir => $fluentbit::manage_config_dir,
+        variables         => $variables,
+        service           => {
           'flush'                    => $flush,
           'grace'                    => $grace,
           'daemon'                   => $daemon,
@@ -112,9 +152,15 @@ class fluentbit::config {
   }
 
   $parsers = $fluentbit::parsers
+  $multiline_parsers = $fluentbit::multiline_parsers
 
   file { $fluentbit::parsers_file:
-    content => epp('fluentbit/parsers.conf.epp', { parsers => $parsers }),
+    content => epp('fluentbit/parsers.conf.epp',
+      {
+        parsers           => $parsers,
+        multiline_parsers => $multiline_parsers,
+      }
+    ),
   }
 
   $plugins = $fluentbit::plugins
