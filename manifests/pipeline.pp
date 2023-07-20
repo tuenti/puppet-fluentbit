@@ -23,9 +23,9 @@
 # @param order Order to be applied to concat::fragment
 # @param properties Hash of rest of properties needed to configure the pipeline-plugin
 define fluentbit::pipeline (
-  Enum['present','absent']        $ensure,
   Enum['input','filter','output'] $type,
   String[1]                       $plugin_name,
+  Enum['present','absent']        $ensure     = 'present',
   String[1]                       $order      = '10',
   Hash[String, Any]               $properties = {},
 ) {
