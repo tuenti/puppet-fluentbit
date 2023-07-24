@@ -17,6 +17,7 @@
 #   }
 # @see https://docs.fluentbit.io/manual/administration/configuring-fluent-bit/yaml/configuration-file#config_pipeline
 #
+# @param ensure Write configuration to disk or not
 # @param type Defines the pipeline type to be configured
 # @param plugin_name fluent-bit plugin name to be used
 # @param order Order to be applied to concat::fragment
@@ -24,6 +25,7 @@
 define fluentbit::pipeline (
   Enum['input','filter','output'] $type,
   String[1]                       $plugin_name,
+  Enum['present','absent']        $ensure     = 'present',
   String[1]                       $order      = '10',
   Hash[String, Any]               $properties = {},
 ) {
@@ -51,7 +53,7 @@ define fluentbit::pipeline (
   if $type == 'filter' and $plugin_name == 'lua' and $properties['code'] {
     # Catch 'code' property for lua scripts and write it to disk
     file { "${fluentbit::config::scripts_dir}/${title}.lua":
-      ensure  => present,
+      ensure  => $ensure,
       mode    => $fluentbit::config_file_mode,
       content => $properties['code'],
       notify  => Service[$fluentbit::service_name],
@@ -64,22 +66,24 @@ define fluentbit::pipeline (
     $script_settings = {}
   }
 
-  concat::fragment { "fragment-${title}":
-    target  => "${fluentbit::config::plugin_dir}/${type}s.conf",
-    content => epp('fluentbit/pipeline.conf.epp',
-      {
-        name       => $plugin_name,
-        type       => $type,
-        properties => merge(
-          $db_settings,
-          {
-            alias => $title,
-          },
-          $properties,
-          $script_settings,
-          $upstream_settings,
-        )
-      }
-    ),
+  if $ensure == 'present' {
+    concat::fragment { "fragment-${title}":
+      target  => "${fluentbit::config::plugin_dir}/${type}s.conf",
+      content => epp('fluentbit/pipeline.conf.epp',
+        {
+          name       => $plugin_name,
+          type       => $type,
+          properties => merge(
+            $db_settings,
+            {
+              alias => $title,
+            },
+            $properties,
+            $script_settings,
+            $upstream_settings,
+          )
+        }
+      ),
+    }
   }
 }
